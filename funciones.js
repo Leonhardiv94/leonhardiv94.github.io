@@ -35,6 +35,10 @@ function cuantosDias(año, mes, dia, NombreEvento){
     }
 }
 
+function leeFormulario(){
+    document.getElementById('output5').innerHTML = `La fecha seleccionada es: ${document.getElementById('fecha').value}`
+}
+
 document.getElementById('output4').innerHTML = cuantosDias(2025,12,25,'Navidad');
 
 document.getElementById('carita').src = valorSrc;
