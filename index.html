@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Funciones</title>
     <script src="funciones.js" defer></script>
+    <script src="patron.js" defer></script>
 </head>
 <body>
     <form id="miFormulario">
@@ -31,6 +32,22 @@
     <div class="colorPicker" id="blanco" style="background-color: white;"></div>
     <div style="clear:both;"></div>
     <div id="texto" style="width: 400px; height: 400px; border-style: solid;">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Labore delectus quia aliquam aliquid deserunt enim earum itaque ex distinctio maiores aperiam quis aut a minus, in sapiente sequi cum. Doloremque!</div>
+    
+    <form>
+        <input type="text" id="texto2" placeholder="Escribe algo...">
+        <button type="button" onclick='contieneNumeros()' id="boton">Comprobar si tiene numeros</button>
+    </form>
+    <p id="output6"></p>
+
+    <form id='miFormulario'>
+        <select name="" id="listaAños"></select>
+        <button type="button" onclick="muestraInfo()" id="boton">Muestra info del año</button>
+    </form>
+
+    <p id="output7"></p>
+    <p id="output8"></p>
+    <p id="output9"></p>
+
     <script>
         document.getElementById('negro').addEventListener('click', function(){
             document.getElementById('texto').style.backgroundColor = 'black';
@@ -40,6 +57,95 @@
             document.getElementById('texto').style.backgroundColor = 'white';
             document.getElementById('texto').style.color = 'black';
         })
+
+        function contieneNumeros(){
+            let texto = document.getElementById("texto2").value;
+            let nuestroPatron = /\d+/;
+            let contieneNumeros = nuestroPatron.test(texto);
+            contieneNumeros ? document.getElementById("output6").innerHTML = "El texto insertado contiene numeros." : document.getElementById("output6").innerHTML = "El texto insertado NO contiene numeros"
+            document.getElementById("texto2").value = "";
+        }
+
+        const select = document.getElementById('listaAños');
+        for (let i = 1940; i <= (new Date).getFullYear() + 20; i += 1){
+            select.innerHTML += `<option value="${i}">${i}</option>`;
+        }
+        let año = {
+            añoRef: (new Date).getFullYear(),
+            bisiesto(){
+                let año = this.añoRef;
+                if ((año % 400 == 0) || (año % 4 == 0) && año % 100 != 0){
+                    return true;
+                } else {
+                    return false;
+                }
+            },
+            semanaSanta(){
+                let a;
+                let b;
+                let c;
+                let año = this.añoRef;
+                let d;
+                let e;
+                let M;
+                let N;
+                let dia;
+                let mes;
+                if (año < 2099){
+                    M = 24;
+                    N = 5;
+                } else if (año < 2199){
+                    M = 24;
+                    N = 6;
+                } else if (año < 2299){
+                    M = 25;
+                    N = 0;
+                } else if (año < 2399){
+                    M = 26;
+                    N = 1;
+                } else if (año < 2499){
+                    M = 25;
+                    N = 1;
+                }
+                a = año % 19;
+                b = año % 4;
+                c = año % 7;
+                d = ((19*a) + M) % 30
+                e = ((2*b) + (4*c) + (6*d) + N) % 7;
+
+                if (d + e < 10){
+                    dia = d + e +22;
+                    mes = 3;
+                } else {
+                    dia = d + e - 9;
+                    mes = 4;
+                }
+
+                if (dia == 26 && mes == 4){
+                    dia = 19;
+                    mes = 4;
+                }
+
+                if (dia == 25 && mes == 4 && d == 29 && e == 6 && a > 10){
+                    dia = 18;
+                    mes = 4;
+                }
+                return new Date(año, mes -1, dia);
+            },
+            diaNavidad(){
+                const nombreDia = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'];
+                let navidad = new Date(this.añoRef, 11, 25);
+                return nombreDia[navidad.getDay()];
+            }
+        }
+        function muestraInfo(){
+            año.añoRef = document.getElementById('listaAños').value;
+            let opciones = {weekdat: 'long', year: 'numeric', monyh:'long', day:'numeric'}
+            document.getElementById('output7').innerHTML = `Fecha de semana santa: ${año.semanaSanta().toLocaleDateString('co-CO', opciones)}`;
+            año.bisiesto() ?
+            document.getElementById("output8").innerHTML = "El año es bisiesto." : document.getElementById("output8").innerHTML = "El año no es bisiesto.";
+            document.getElementById("output9").innerHTML = `Dia de navidad: ${año.diaNavidad()}`;
+        }
     </script>
 </body>
 </html>
